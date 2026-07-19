@@ -17,6 +17,7 @@ module id_ex_reg(
     input memread_i,
     input memtoreg_i,
     input regwrite_i,
+    input regeq_i,
     output logic [31:0] pc_o,
     output logic [31:0] read_data1_o,
     output logic [31:0] read_data2_o,
@@ -30,7 +31,8 @@ module id_ex_reg(
     output logic memwrite_o,
     output logic memread_o,
     output logic memtoreg_o,
-    output logic regwrite_o
+    output logic regwrite_o,
+    output logic regeq_o
     );
     
     always @(posedge clk) begin

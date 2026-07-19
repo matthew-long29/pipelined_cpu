@@ -2,13 +2,14 @@
 
 module instruction_memory (
     input clk,
-    input [31:0] pc,
+    input reset,
+    input [31:0] instruction_addr,
     output logic [31:0] instruction_code
 );
     logic [7:0] memory [108 : 0]; 
     
     //Read in program from file
     
-    assign instruction_code = {memory[pc + 3], memory[pc + 2], memory[pc + 1], memory[pc]};
+    assign instruction_code = {memory[instruction_addr + 3], memory[instruction_addr + 2], memory[instruction_addr + 1], memory[instruction_addr]};
 
 endmodule

@@ -12,6 +12,8 @@ module control(
     output logic ALUsrc,
     output logic regwrite
     );
+    
+    
     always_comb begin
         regdst = 0;
         jump = 0;
@@ -22,6 +24,8 @@ module control(
         memwrite = 0;
         ALUsrc = 0;
         regwrite = 0;
+        
+        
         
         case(opcode)
             6'b000000: begin // R-type
