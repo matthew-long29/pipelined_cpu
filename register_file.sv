@@ -24,6 +24,6 @@ module register_file(
         end     
     end
     assign read_data1 = (read_reg1 == 0)? 0 : reg_file[read_reg1];  
-    assign read_data2 = (read_reg1 == 0)? 0 : reg_file[read_reg2];
+    assign read_data2 = (read_reg2 == 0)? 0 : reg_file[read_reg2];
     
 endmodule

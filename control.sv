@@ -31,23 +31,23 @@ module control(
             6'b000000: begin // R-type
                 regdst   = 1;
                 regwrite = 1;
-                ALUop    = 3'b010;
+                ALUop    = 3'b010; //use funct to determine operation
                 end
             6'b100011: begin // lw
                 memread  = 1;
                 memtoreg = 1;
                 ALUsrc   = 1;
                 regwrite = 1;
-                ALUop    = 3'b000;
+                ALUop    = 3'b000; // add
             end
             6'b101011: begin // sw
                 memwrite = 1;
                 ALUsrc   = 1;
-                ALUop    = 3'b000;
+                ALUop    = 3'b000; // add
             end
             6'b000100: begin // beq
                 branch   = 1;
-                ALUop    = 3'b001;
+                ALUop    = 3'b001; // subtract
             end
             6'b000010: begin // j
                 jump     = 1;
@@ -55,7 +55,7 @@ module control(
             6'b001000: begin // addi
                 ALUsrc   = 1;
                 regwrite = 1;
-                ALUop    = 3'b000;
+                ALUop    = 3'b000; // add
             end
             default: begin
                 regdst = 0; 

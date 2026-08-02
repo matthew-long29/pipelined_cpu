@@ -3,15 +3,14 @@
 module top(
     input clk,
     input reset,
-    output logic y
+    output logic [31:0] final_out
     );
     //------- IF Stage Signals ---------//
     logic [31:0] pc_if;
     logic [31:0] if_instruction,id_instruction;
     logic [31:0] branch_address;
-    logic if_id_hazard;
     logic if_branch;
-    logic if_stall;
+    logic stall;
     //------- ID Stage Signals --------//
     logic [31:0] pc_id;
     logic [4:0] id_reg1, id_reg2, id_reg_rd;
@@ -34,7 +33,9 @@ module top(
     logic [2:0] ex_ALUop;
     logic [31:0] ex_ALU_src_a, ex_ALU_src_b1, ex_ALU_src_b2, ex_ALUout;
     logic [4:0] ex_write_reg;
-    
+    logic [4:0] ex_shamt;
+    logic [5:0] ex_funct;
+    logic [3:0] ex_ALUctrl;
     //------- MEM Stage Signals-------//
     logic [31:0] mem_ALUout, mem_write_data, mem_read_data;
     logic [4:0] mem_write_reg;
@@ -42,7 +43,8 @@ module top(
     
     //------- WB Stage Signals-------//
     logic wb_regwrite, wb_memtoreg;
-    logic [31:0] wb_ALUout, wb_read_data, wb_value, wb_write_reg;
+    logic [31:0] wb_ALUout, wb_read_data, wb_value;
+    logic [4:0] wb_write_reg;
     
     //-----Forwarding Unit Signals---//
     logic [1:0] forward_a;
@@ -53,7 +55,7 @@ module top(
     fetch_unit u_fetch_unit(
     .clk(clk),
     .reset(reset),
-    .stall(if_stall),
+    .stall(stall),
     .branch(if_branch),
     .branch_addr(branch_address),
     .instruction_addr(pc_if)
@@ -69,7 +71,7 @@ module top(
     if_id_reg u_if_id (
         .clk(clk),
         .reset(reset),
-        .hazard(if_id_hazard),
+        .hazard(stall),
         .instruction_code_i(if_instruction),
         .pc_i(pc_if),
         .instruction_code_o(id_instruction),
@@ -114,6 +116,7 @@ module top(
     id_ex_reg u_id_ex (
     .clk(clk),
     .reset(reset),
+    .hazard(stall),
     .pc_i(pc_id),
     .read_data1_i(id_reg_data1),
     .read_data2_i(id_reg_data2),
@@ -123,6 +126,8 @@ module top(
     .rd_i(id_reg_rd),
     .ALUsrc_i(id_ALUsrc),
     .ALUop_i(id_ALUop),
+    .funct_i(id_funct),
+    .shamt_i(id_shamt),
     .regdst_i(id_regdst),
     .memwrite_i(id_memwrite),
     .memread_i(id_memread),
@@ -138,6 +143,8 @@ module top(
     .rd_o(ex_reg_rd),
     .ALUsrc_o(ex_ALUsrc),
     .ALUop_o(ex_ALUop),
+    .funct_o(ex_funct),
+    .shamt_o(ex_shamt),
     .regdst_o(ex_regdst),
     .memwrite_o(ex_memwrite),
     .memread_o(ex_memread),
@@ -148,10 +155,18 @@ module top(
     
     assign ex_write_reg = ex_regdst ? ex_reg_rd : ex_reg2; 
     assign ex_ALU_src_b2 = ex_ALUsrc ? ex_imm_val : ex_ALU_src_b1;
+    
+    alu_control u_alu_control (
+    .ALUop(ex_ALUop),
+    .funct(ex_funct),
+    .alu_ctrl(ex_ALUctrl)
+    );
+    
     ALU u_alu (
     .a(ex_ALU_src_a),
     .b(ex_ALU_src_b2),
-    .control(ex_ALUop),
+    .control(ex_ALUctrl),
+    .shamt(ex_shamt),
     .result(ex_ALUout)
     );
     
@@ -211,6 +226,14 @@ module top(
     .forward_b(forward_b)
     );
     
+    hazard_detection u_hazard_detection(
+    .id_reg1(id_reg1),
+    .id_reg2(id_reg2),
+    .ex_memread(ex_memread),
+    .ex_write_reg(ex_write_reg),
+    .stall(stall)
+    );
+    
     always_comb begin
         case (forward_a)
             2'b00: ex_ALU_src_a = ex_reg_data1;
@@ -226,4 +249,6 @@ module top(
             default: ex_ALU_src_b1 = ex_reg_data2;
         endcase
     end
+    
+    assign final_out = wb_value;
 endmodule

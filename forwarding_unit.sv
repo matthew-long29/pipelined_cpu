@@ -25,7 +25,7 @@ module forwarding_unit(
         if(ex_mem_regwrite && ex_mem_reg_rd == ex_reg2) begin
             forward_b = 2'b10;
         end else if(mem_wb_regwrite && mem_wb_reg_rd == ex_reg2) begin
-            eforward_b = 2'b01;
+            forward_b = 2'b01;
         end
         
     end

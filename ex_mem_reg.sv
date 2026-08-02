@@ -21,7 +21,7 @@ module ex_mem_reg(
     
     always @(posedge clk) begin
         if (reset) begin
-            ALUresult_o  <= 32'b0;
+            ALUresult_o   <= 32'b0;
             write_data_o  <= 32'b0;
             rd_o          <= 5'b0;
             memwrite_o    <= 1'b0;
@@ -29,7 +29,7 @@ module ex_mem_reg(
             memtoreg_o    <= 1'b0;
             regwrite_o    <= 1'b0;
         end else begin
-            ALUresult_o  <= ALUresult_i;
+            ALUresult_o   <= ALUresult_i;
             write_data_o  <= write_data_i;
             rd_o          <= rd_i;
             memwrite_o    <= memwrite_i;
