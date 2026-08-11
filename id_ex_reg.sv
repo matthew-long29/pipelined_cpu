@@ -41,7 +41,7 @@ module id_ex_reg(
     );
     
     always @(posedge clk) begin
-        if (reset | hazard) begin
+        if (reset) begin
             pc_o         <= 32'b0;
             read_data1_o <= 32'b0;
             read_data2_o <= 32'b0;
@@ -57,7 +57,26 @@ module id_ex_reg(
             memwrite_o   <= 1'b0;
             memread_o    <= 1'b0;
             memtoreg_o   <= 1'b0;
-            regwrite_o   <= 1'b0; 
+            regwrite_o   <= 1'b0;
+        end
+        else if (hazard) begin
+            pc_o         <= pc_i;
+            read_data1_o <= 32'b0;
+            read_data2_o <= 32'b0;
+            immediate_o  <= 32'b0;
+            rs_o         <= 5'b0;
+            rt_o         <= 5'b0;
+            rd_o         <= 5'b0;
+            ALUsrc_o     <= 1'b0;
+            ALUop_o      <= 3'b0;
+            funct_o      <= 6'b0;
+            shamt_o      <= 5'b0;
+            regdst_o     <= 1'b0;
+            memwrite_o   <= 1'b0;
+            memread_o    <= 1'b0;
+            memtoreg_o   <= 1'b0;
+            regwrite_o   <= 1'b0;
+         
         end else begin
             pc_o <= pc_i;
             read_data1_o <= read_data1_i;

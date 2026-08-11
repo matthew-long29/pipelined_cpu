@@ -19,7 +19,7 @@ module instruction_memory (
         memory[24] = 8'h02; memory[25] = 8'h00; memory[26] = 8'h65; memory[27] = 8'h10; // beq  $3, $5, 2
         memory[28] = 8'he7; memory[29] = 8'h03; memory[30] = 8'h06; memory[31] = 8'h20; // addi $6, $0, 999 (skipped)
         memory[32] = 8'he7; memory[33] = 8'h03; memory[34] = 8'h07; memory[35] = 8'h20; // addi $7, $0, 999 (skipped)
-        memory[36] = 8'h24; memory[37] = 8'h40; memory[38] = 8'h22; memory[39] = 8'h00; // and  $8, $1, $2  (branch target)
+        memory[36] = 8'h09; memory[37] = 8'h03; memory[38] = 8'h08; memory[39] = 8'h20; // addi $8, $0, 777
     end
     
     assign instruction_code = {memory[instruction_addr + 3], memory[instruction_addr + 2], memory[instruction_addr + 1], memory[instruction_addr]};

@@ -72,6 +72,7 @@ module top(
         .clk(clk),
         .reset(reset),
         .hazard(stall),
+        .flush(if_branch),
         .instruction_code_i(if_instruction),
         .pc_i(pc_if),
         .instruction_code_o(id_instruction),
@@ -231,6 +232,8 @@ module top(
     .id_reg2(id_reg2),
     .ex_memread(ex_memread),
     .ex_write_reg(ex_write_reg),
+    .mem_memread(mem_memread),
+    .mem_write_reg(mem_write_reg),
     .stall(stall)
     );
     

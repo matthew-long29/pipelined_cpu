@@ -16,14 +16,16 @@ module register_file(
     always_ff @(posedge clk) begin
         if (reset) begin
             for (int i = 0; i < 32; i++) begin
-                reg_file[i] = 32'b0;
+                reg_file[i] <= 32'b0;
             end
         end
         if (write_en && write_reg != 5'b0) begin
             reg_file[write_reg] <= write_data;
-        end     
+        end        
     end
-    assign read_data1 = (read_reg1 == 0)? 0 : reg_file[read_reg1];  
-    assign read_data2 = (read_reg2 == 0)? 0 : reg_file[read_reg2];
+    assign read_data1 = (read_reg1 == 0)? 0 : 
+    (write_en && write_reg == read_reg1) ? write_data : reg_file[read_reg1];  
+    assign read_data2 = (read_reg2 == 0) ? 0 : 
+    (write_en && write_reg == read_reg2) ? write_data : reg_file[read_reg2];
     
 endmodule

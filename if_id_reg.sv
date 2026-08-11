@@ -4,6 +4,7 @@ module if_id_reg(
     input clk,
     input reset,
     input hazard,
+    input flush,
     input [31:0] instruction_code_i,
     input [31:0] pc_i,
     output logic [31:0] instruction_code_o,
@@ -14,6 +15,10 @@ module if_id_reg(
         if (reset) begin
             instruction_code_o <= 32'b0;
             pc_o               <= 32'b0;
+        end
+        else if (flush) begin
+            instruction_code_o <= 32'b0;
+            pc_o               <= pc_i;
         end
         else if (hazard) begin
             instruction_code_o <= instruction_code_o;
