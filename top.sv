@@ -51,7 +51,7 @@ module top(
     logic [1:0] forward_b;
     
     assign branch_address = pc_id + 4 + (id_imm_val << 2);
-    assign if_branch = id_branch & id_regeq;
+    assign if_branch = id_branch & id_regeq & ~stall;
     fetch_unit u_fetch_unit(
     .clk(clk),
     .reset(reset),
@@ -228,11 +228,13 @@ module top(
     );
     
     hazard_detection u_hazard_detection(
+    .id_branch(id_branch),
     .id_reg1(id_reg1),
     .id_reg2(id_reg2),
     .ex_memread(ex_memread),
+    .ex_regwrite(ex_regwrite),
     .ex_write_reg(ex_write_reg),
-    .mem_memread(mem_memread),
+    .mem_regwrite(mem_regwrite),
     .mem_write_reg(mem_write_reg),
     .stall(stall)
     );
