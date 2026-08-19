@@ -13,6 +13,7 @@ module top(
     logic stall;
     //------- ID Stage Signals --------//
     logic [31:0] pc_id;
+    logic [31:0] pc_id_increment;
     logic [4:0] id_reg1, id_reg2, id_reg_rd;
     logic [31:0] id_write_data;
     logic [31:0] id_reg_data1, id_reg_data2;
@@ -20,6 +21,7 @@ module top(
     logic [4:0]  id_shamt;
     logic [5:0]  id_funct;
     logic [31:0] id_imm_val;
+    logic [31:0] id_jump_addr;
     logic id_regdst, id_jump, id_branch, id_memread, id_memtoreg, id_memwrite, id_regwrite, id_regeq;
     logic [2:0] id_ALUop;
     //------- EX Stage Signals-------//
@@ -50,14 +52,19 @@ module top(
     logic [1:0] forward_a;
     logic [1:0] forward_b;
     
+    assign pc_id_increment = pc_id + 4;
+    assign id_jump_addr = {pc_id_increment[31:28], id_instruction[25:0], 2'b00};
     assign branch_address = pc_id + 4 + (id_imm_val << 2);
     assign if_branch = id_branch & id_regeq & ~stall;
+    
     fetch_unit u_fetch_unit(
     .clk(clk),
     .reset(reset),
     .stall(stall),
     .branch(if_branch),
     .branch_addr(branch_address),
+    .jump(id_jump),
+    .jump_addr(id_jump_addr),
     .instruction_addr(pc_if)
     );
     
@@ -72,7 +79,7 @@ module top(
         .clk(clk),
         .reset(reset),
         .hazard(stall),
-        .flush(if_branch),
+        .flush(if_branch | id_jump),
         .instruction_code_i(if_instruction),
         .pc_i(pc_if),
         .instruction_code_o(id_instruction),
